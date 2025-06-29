@@ -18,7 +18,7 @@ class package_info {
     /**
      * Author attribute to appear in javadoc.
      */
-    static final String Author = "sgraupner";   // <-- adjust with your name
+    static final String Author = "kShali";   // <-- adjust with your name
 
     /**
      * Version attribute to appear in javadoc.
