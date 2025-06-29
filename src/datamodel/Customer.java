@@ -54,7 +54,7 @@ public class Customer {
      * @return Referenz auf das Customer-Objekt (this)
      */
     public Customer setId(long id) {
-        if (id < 0) throw new IllegalArgumentException("ID must be >= 0");
+        if (id < 0) throw new IllegalArgumentException("invalid id (negative)");
         if (this.id == -1) {
             this.id = id;
         }
@@ -191,8 +191,13 @@ public class Customer {
      * @throws IllegalArgumentException if name argument is null or empty
      */
     public void splitName(String name) {
-if (name == null || name.trim().isEmpty())
-            throw new IllegalArgumentException("Name must not be null/empty");
+        if(name == null){
+            throw new IllegalArgumentException("name null");
+        }
+
+        if (name.trim().isEmpty()){
+            throw new IllegalArgumentException("name empty");
+        }
 
         // Entferne führende/trailende Leerzeichen, Kommata, Semikola, Quotes
         String trimmed = trim(name);
