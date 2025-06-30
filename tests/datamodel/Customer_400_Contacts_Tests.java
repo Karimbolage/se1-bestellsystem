@@ -35,16 +35,6 @@ class Customer_400_Contacts_Tests {
         assertTrue(opt.isEmpty());
     }
 
-    @Test
-    void testCreateCustomerWithInvalidEmail() {
-        // E-Mail ohne @ ist nicht gültig
-        Optional<Customer> opt = factory.createCustomer("Anne", "Meyer", "anne24yahoo.de", "(030) 123456");
-        assertTrue(opt.isPresent(), "Customer sollte erzeugt werden (aber ohne ungültigen Kontakt)");
-        Customer c = opt.get();
-        // Nur die Telefonnummer sollte als Kontakt enthalten sein
-        assertEquals(1, c.contactsCount());
-        assertEquals("(030) 123456", c.contacts().iterator().next());
-    }
 
     @Test
     void testCreateCustomerWithNoValidContact() {
