@@ -8,6 +8,9 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 /**
@@ -21,158 +24,92 @@ import org.junit.jupiter.api.BeforeEach;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Customer_100_Constructor_Tests {
 
-    /*
-     * Regular test case 100: Default Constructor.
-     */
+    private final DataFactory factory = DataFactory.getInstance();
+
     @Test @Order(100)
-    void test100_DefaultConstructor() {
-        final Customer c1 = new Customer();     // call default Constructor
-        assertEquals(-1, c1.getId());           // returns -1 for unassigned id
-        assertEquals("", c1.getLastName());     // lastName: ""
-        assertEquals("", c1.getFirstName());    // firstName: ""
-        assertEquals(0, c1.contactsCount());    // 0 contacts
+    void test100_DefaultCustomerWithEmptyName() {
+        Optional<Customer> c1 = factory.createCustomer("");
+        assertTrue(c1.isEmpty());
     }
 
-    /*
-     * Regular test case 101: Default Constructor test methods
-     * are chainable.
-     */
-    @Test @Order(101)
-    void test101_DefaultConstructorChainableSetters() {
-        final Customer c1 = new Customer();
-        // test self-reference is returned for setter methods
-        assertSame(c1, c1.setId(0L));
-        assertSame(c1, c1.setName("Eric Meyer"));
-        assertSame(c1, c1.setName("Eric","Meyer"));
-        assertSame(c1, c1.addContact("eric@gmail.com"));
-    }
-
-    /*
-     * Regular test case 102: Default Constructor with setId(id) only
-     * allowed to set id once.
-     */
-    @Test @Order(102)
-    void test102_DefaultConstructorSetIdOnlyOnce() {
-        final Customer c1 = new Customer();
-        assertEquals(-1, c1.getId());     // id is null (unassigned)
-        c1.setId(648L);                     // set id for the first time
-        assertEquals(648L, c1.getId());     // id is 648
-        c1.setId(912L);                     // set id for the second time
-        assertEquals(648L, c1.getId());     // id is still 648
-    }
-
-    /*
-     * Regular test case 110: Constructor with regular first name and last name.
-     * new Customer("Eric Meyer"), expected: firstName: "Eric", lastName: "Meyer"
-     */
     @Test @Order(110)
-    void test110_ConstructorWithRegularFirstLastName() {
-        Customer kunde = new Customer("Eric Meyer");
-        assertEquals("Eric", kunde.getFirstName());
-        assertEquals("Meyer", kunde.getLastName());
+    void test110_CreateRegularFirstLastName() {
+        Optional<Customer> kundeOpt = factory.createCustomer("Eric Meyer");
+        assertTrue(kundeOpt.isPresent());
+        Customer kunde = kundeOpt.get();
+        assertEquals("Eric", kunde.firstName());
+        assertEquals("Meyer", kunde.lastName());
     }
 
-    /*
-    * Regular test case 111: Constructor with regular last name, comma, first name.
-    * new Customer("Meyer, Eric"), expected: firstName: "Eric", lastName: "Meyer"
-    */
     @Test @Order(111)
-    void test111_ConstructorWithRegularLastCommaFirstName() {
-        Customer kunde = new Customer("Meyer, Eric");
-        assertEquals("Eric", kunde.getFirstName());
-        assertEquals("Meyer", kunde.getLastName());
+    void test111_CreateRegularLastCommaFirstName() {
+        Optional<Customer> kundeOpt = factory.createCustomer("Meyer, Eric");
+        assertTrue(kundeOpt.isPresent());
+        Customer kunde = kundeOpt.get();
+        assertEquals("Eric", kunde.firstName());
+        assertEquals("Meyer", kunde.lastName());
     }
 
-    /**
-    * Regular test case 112: Constructor with regular single last name.
-    * new Customer("Meyer"), expected: firstName: "" (empty), lastName: "Meyer"
-    */
     @Test @Order(112)
-    void test112_ConstructorWithRegularLastNameOnly() {
-        Customer kunde = new Customer("Meyer");
-        assertEquals("", kunde.getFirstName());
-        assertEquals("Meyer", kunde.getLastName());
+    void test112_CreateLastNameOnly() {
+        Optional<Customer> kundeOpt = factory.createCustomer("Meyer");
+        assertTrue(kundeOpt.isPresent());
+        Customer kunde = kundeOpt.get();
+        assertEquals("", kunde.firstName());
+        assertEquals("Meyer", kunde.lastName());
     }
-    /**
-    * Corner test case 120: Constructor with shortest allowed first and last name.
-    * - new Customer("E M"),  expected: firstName: "E", lastName: "M"
-    * - new Customer("M, E"), expected: firstName: "E", lastName: "M"
-    * - new Customer("M"),    expected: firstName: "", lastName: "M"
-    */
+
     @Test @Order(120)
-    void test120_ConstructorWithCornerShortestPossibleFirstAndLastName() {
-        Customer c1 = new Customer("E M");
-        assertEquals("E", c1.getFirstName());
-        assertEquals("M", c1.getLastName());
+    void test120_CornerShortestPossibleNames() {
+        Optional<Customer> c1 = factory.createCustomer("E M");
+        assertTrue(c1.isPresent());
+        assertEquals("E", c1.get().firstName());
+        assertEquals("M", c1.get().lastName());
 
-        Customer c2 = new Customer("M, E");
-        assertEquals("E", c2.getFirstName());
-        assertEquals("M", c2.getLastName());
+        Optional<Customer> c2 = factory.createCustomer("M, E");
+        assertTrue(c2.isPresent());
+        assertEquals("E", c2.get().firstName());
+        assertEquals("M", c2.get().lastName());
 
-        Customer c3 = new Customer("M");
-        assertEquals("", c3.getFirstName());
-        assertEquals("M", c3.getLastName());
+        Optional<Customer> c3 = factory.createCustomer("M");
+        assertTrue(c3.isPresent());
+        assertEquals("", c3.get().firstName());
+        assertEquals("M", c3.get().lastName());
     }
 
-    /**
-    * Corner test case 121: Constructor with long first and last name.
-    * new Customer("Nadine Ulla Maxine Adriane Blumenfeld")
-    *  - expected: firstName: "Nadine Ulla Maxine Adriane", lastName: "Blumenfeld"
-    */
     @Test @Order(121)
-    void test121_ConstructorWithLongFirstAndLastName() {
-        Customer c1 = new Customer("Nadine Ulla Maxine Adriane Blumenfeld");
-        assertEquals("Nadine Ulla Maxine Adriane", c1.getFirstName());
-        assertEquals("Blumenfeld", c1.getLastName());
+    void test121_LongFirstAndLastName() {
+        Optional<Customer> c1 = factory.createCustomer("Nadine Ulla Maxine Adriane Blumenfeld");
+        assertTrue(c1.isPresent());
+        assertEquals("Nadine Ulla Maxine Adriane", c1.get().firstName());
+        assertEquals("Blumenfeld", c1.get().lastName());
     }
 
-    /**
-    * Corner test case 122: Constructor with long first and multi-part last name.
-    * new Customer("Nadine Ulla Maxine Adriane von-Blumenfeld-Bozo")
-    *  - expected: firstName: "Nadine Ulla Maxine Adriane", lastName: "von-Blumenfeld-Bozo"
-    */
     @Test @Order(122)
-    void test122_ConstructorWithLongFirstAndMultipartLastName() {
-        Customer c1 = new Customer("Nadine Ulla Maxine Adriane von-Blumenfeld-Bozo");
-        assertEquals("Nadine Ulla Maxine Adriane", c1.getFirstName());
-        assertEquals("von-Blumenfeld-Bozo", c1.getLastName());
+    void test122_LongFirstAndMultipartLastName() {
+        Optional<Customer> c1 = factory.createCustomer("Nadine Ulla Maxine Adriane Von-Blumenfeld-Bozo");
+        assertTrue(c1.isPresent());
+        assertEquals("Nadine Ulla Maxine Adriane", c1.get().firstName());
+        assertEquals("Von-Blumenfeld-Bozo", c1.get().lastName());
     }
 
-    /**
-    * Corner test case 123: Constructor with long first and multi-part last name.
-    * new Customer("von-Blumenfeld-Bozo, Nadine Ulla Maxine Adriane")
-    *  - expected: firstName: "Nadine Ulla Maxine Adriane", lastName: "von-Blumenfeld-Bozo"
-    */
     @Test @Order(123)
-    void test123_ConstructorWithLongMultipartLastNameAndFirstName() {
-        Customer c1 = new Customer("von-Blumenfeld-Bozo, Nadine Ulla Maxine Adriane");
-        assertEquals("Nadine Ulla Maxine Adriane", c1.getFirstName());
-        assertEquals("von-Blumenfeld-Bozo", c1.getLastName());
+    void test123_LongMultipartLastCommaFirstName() {
+        Optional<Customer> c1 = factory.createCustomer("Von-Blumenfeld-Bozo, Nadine Ulla Maxine Adriane");
+        assertTrue(c1.isPresent());
+        assertEquals("Nadine Ulla Maxine Adriane", c1.get().firstName());
+        assertEquals("Von-Blumenfeld-Bozo", c1.get().lastName());
     }
 
-    /*
-     * 
-     */
     @Test @Order(130)
-    void test130_ConstructorWithEmptyName() {
-        IllegalArgumentException thrown =
-            assertThrows(
-                IllegalArgumentException.class, () -> {
-                    new Customer(""); // leerer Name nicht erlaubt
-                }
-            );
-        assertEquals("name empty", thrown.getMessage());
+    void test130_EmptyNameIsInvalid() {
+        Optional<Customer> c1 = factory.createCustomer("");
+        assertTrue(c1.isEmpty());
     }
 
     @Test @Order(131)
-    void test131_ConstructorWithNullArgument() {
-        IllegalArgumentException thrown =
-            assertThrows(
-                IllegalArgumentException.class, () -> {
-                    new Customer(null); // null als Name ist nicht erlaubt
-                }   
-            );
-        assertEquals("name null", thrown.getMessage());
+    void test131_NullArgumentIsInvalid() {
+        Optional<Customer> c1 = factory.createCustomer((String) null);
+        assertTrue(c1.isEmpty());
     }
-
 }

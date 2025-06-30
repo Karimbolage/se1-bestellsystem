@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import datamodel.Customer;
+import datamodel.DataFactory;
 
 
 /**
@@ -24,31 +25,29 @@ public class Application_C12 implements Runner {
     @Override
     public void run(String[] args) {
         // 
-        final Customer eric = new Customer("Eric Meyer")
-            .setId(892474L)     // set id, first time
-            .setId(947L)        // ignored, since id can only be set once
-            .addContact("eric98@yahoo.com")
-            .addContact("eric98@yahoo.com") // ignore duplicate contact
-            .addContact("(030) 3945-642298");
 
-        final Customer anne = new Customer("Bayer, Anne")
-            .setId(643270L)
-            .addContact("anne24@yahoo.de")
-            .addContact("(030) 3481-23352")
-            .addContact("fax: (030)23451356");
+        DataFactory df = DataFactory.getInstance();
 
-        final Customer tim = new Customer("Tim Schulz-Mueller")
-            .setId(286516L)
-            .addContact("tim2346@gmx.de");
+        Customer eric = df.createCustomer(
+    "Eric", "Meyer", "eric98@yahoo.com", "eric98@yahoo.com", "(030) 3945-642298"
+        ).orElseThrow(() -> new RuntimeException("Eric konnte nicht erzeugt werden"));
 
-        final Customer nadine = new Customer("Nadine-Ulla Blumenfeld")
-            .setId(412396L)
-            .addContact("+49 152-92454");
+        Customer anne = df.createCustomer(
+        "Bayer, Anne", "anne24@yahoo.de", "(030) 3481-23352", "fax: (030)23451356"
+        ).orElseThrow(() -> new RuntimeException("Anne konnte nicht erzeugt werden"));
 
-        final Customer khaled = new Customer()
-            .setName("Khaled Saad Mohamed Abdelalim")
-            .setId(456454L)
-            .addContact("+49 1524-12948210");
+        Customer tim = df.createCustomer(
+        "Tim", "Schulz-Mueller", "tim2346@gmx.de"
+        ).orElseThrow(() -> new RuntimeException("Tim konnte nicht erzeugt werden"));
+
+        Customer nadine = df.createCustomer(
+        "Nadine-Ulla Blumenfeld", "+49 152-92454"
+        ).orElseThrow(() -> new RuntimeException("Nadine konnte nicht erzeugt werden"));
+
+        Customer khaled = df.createCustomer(
+        "Khaled Saad Mohamed Abdelalim", "+49 1524-12948210"
+        ).orElseThrow(() -> new RuntimeException("Khaled konnte nicht erzeugt werden"));
+
 
         final TableFormatter tf = new TableFormatter("|%-6s", "| %-32s", "| %-32s |")
             .line()
@@ -59,12 +58,12 @@ public class Application_C12 implements Runner {
 
         customers.stream()
             .forEach(c -> {
-                String id = String.format("%d", c.getId());
+                String id = String.format("%d", c.id());    // statt getId()
                 String name = fmtCustomerName(c);
                 String contact = fmtCustomerContacts(c, 1);
-                //
                 tf.row(id, name, contact);  // write row into table
         });
+
 
         tf.line();
         System.out.println(tf.get().toString());    // print table
@@ -86,28 +85,27 @@ public class Application_C12 implements Runner {
      * @return formatted Customer name.
      */
     public String fmtCustomerName(final Customer customer, final int... fmt) {
-        if(customer==null)
+        if(customer == null)
             throw new IllegalArgumentException("Customer null.");
-        //
-        String ln = customer.getLastName();
-        String fn = customer.getFirstName();
-        String fn1 = fn.length() > 0? fn.substring(0, 1).toUpperCase() : "";
-        //
-        final int ft = fmt.length > 0? fmt[0] : 0;  // 0 is default format
-        switch(ft) {    // 0 is default
-        case 0: return String.format("%s, %s", ln, fn);
-        case 1: return String.format("%s %s", fn, ln);
-        case 2: return String.format("%s, %s.", ln, fn1);
-        case 3: return String.format("%s. %s", fn1, ln);
-        case 4: return ln;
-        case 5: return fn;
-        //
-        case 10: case 11: case 12: case 13: case 14: case 15:
-            return fmtCustomerName(customer, ft - 10).toUpperCase();
-        //
-        default: return fmtCustomerName(customer, 0);
-        }
+
+        String ln = customer.lastName();          // statt getLastName()
+        String fn = customer.firstName();         // statt getFirstName()
+        String fn1 = fn.length() > 0 ? fn.substring(0, 1).toUpperCase() : "";
+
+        final int ft = fmt.length > 0 ? fmt[0] : 0;
+        switch(ft) {
+            case 0: return String.format("%s, %s", ln, fn);
+            case 1: return String.format("%s %s", fn, ln);
+            case 2: return String.format("%s, %s.", ln, fn1);
+            case 3: return String.format("%s. %s", fn1, ln);
+            case 4: return ln;
+            case 5: return fn;
+            case 10: case 11: case 12: case 13: case 14: case 15:
+                return fmtCustomerName(customer, ft - 10).toUpperCase();
+            default: return fmtCustomerName(customer, 0);
     }
+}
+
 
     /**
      * Format Customer contacts according to a format (0 is default):
@@ -122,28 +120,30 @@ public class Application_C12 implements Runner {
      * @return formatted Customer contact information.
      */
     public String fmtCustomerContacts(final Customer customer, final int... fmt) {
-        if(customer==null)
+        if(customer == null)
             throw new IllegalArgumentException("Customer null.");
         //
-        var clen = customer.contactsCount();
-        final int ft = fmt.length > 0? fmt[0] : 0;  // 0 is default format
-        switch(ft) {    // 0 is default
-        case 0:
-            return String.format("%s", clen > 0? customer.getContacts().iterator().next() : "");
-
-        case 1:
-            String ext = clen > 1? String.format(", (+%d contacts)", clen - 1) : "";
-            return String.format("%s%s", fmtCustomerContacts(customer, 0), ext);
-
-        case 2:
-            StringBuilder sb = new StringBuilder();
-            StreamSupport.stream(customer.getContacts().spliterator(), false)
-                .forEach(contact -> sb.append(contact).append(sb.length() > 0? ", " : ""));
-            return sb.toString();
-        //
-        default: return fmtCustomerContacts(customer, 0);
-        }
+        var clen = customer.contactsCount();        // statt getContacts().size()
+        final int ft = fmt.length > 0 ? fmt[0] : 0;
+        switch(ft) {
+            case 0:
+                // Iterable<String> contacts = customer.contacts();
+                return String.format("%s", clen > 0 ? customer.contacts().iterator().next() : "");
+            case 1:
+                String ext = clen > 1 ? String.format(", (+%d contacts)", clen - 1) : "";
+                return String.format("%s%s", fmtCustomerContacts(customer, 0), ext);
+            case 2:
+                StringBuilder sb = new StringBuilder();
+                StreamSupport.stream(customer.contacts().spliterator(), false)
+                    .forEach(contact -> {
+                        if (sb.length() > 0) sb.append(", ");
+                        sb.append(contact);
+                    });
+                return sb.toString();
+            default:
+                return fmtCustomerContacts(customer, 0);
     }
+}
 
     /**
      * Class of a table formatter that uses String.format(fmt) expressions

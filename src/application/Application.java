@@ -24,11 +24,7 @@ public class Application implements Runner {
     public static void main(String[] args) {
         // 
         // create singleton {@link Runner} instance
-<<<<<<< HEAD
-        Runner application = new Application_C12();
-=======
         Runner application = new Application_D1();
->>>>>>> se1-remote/d1-datafactory
         // 
         // print greeting for modular or none-modular project (moduleName: null)
         String className = application.getClass().getSimpleName();

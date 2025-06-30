@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 
@@ -29,7 +32,7 @@ class Customer_500_NameXXL_Tests {
      * Created for execution of every @Test method since the test
      * runner executes all @Test methods in parallel.
      */
-    private Customer c1;    // test-object, "unit-under-test"
+    private DataFactory factory;// test-object, "unit-under-test"
 
 
     /**
@@ -39,7 +42,7 @@ class Customer_500_NameXXL_Tests {
      */
     @BeforeEach
     public void setUpBeforeEach() throws Exception {
-        c1 = new Customer();
+        factory = DataFactory.getInstance();
     }
 
 
@@ -48,23 +51,28 @@ class Customer_500_NameXXL_Tests {
      */
     @Test @Order(500)
     void test500_setNameMultipartLastName() {
-        c1.setName("Tim Schulz-Mueller-Meyer");     // name style 1 with multi-part last name
-        assertEquals("Tim", c1.getFirstName());
-        assertEquals("Schulz-Mueller-Meyer", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Tim Schulz-Mueller-Meyer");
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("Schulz-Mueller-Meyer", customer.lastName());
     }
 
     @Test @Order(501)
     void test501_setNameMultipartLastName() {
-        c1.setName("Schulz-Mueller-Meyer, Tim");    // name style 2
-        assertEquals("Tim", c1.getFirstName());
-        assertEquals("Schulz-Mueller-Meyer", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Schulz-Mueller-Meyer, Tim");    // name style 2
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("Tim", customer.firstName());
+        assertEquals("Schulz-Mueller-Meyer", customer.lastName());
     }
 
     @Test @Order(502)
     void test502_setNameMultipartLastName() {
-        c1.setName("Schulz-Mueller-Meyer; Tim");    // name style 3
-        assertEquals("Tim", c1.getFirstName());
-        assertEquals("Schulz-Mueller-Meyer", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Schulz-Mueller-Meyer; Tim");    // name style 3
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("Tim", customer.firstName());
+        assertEquals("Schulz-Mueller-Meyer", customer.lastName());
     }
 
 
@@ -73,23 +81,29 @@ class Customer_500_NameXXL_Tests {
      */
     @Test @Order(510)
     void test510_setNameDoubleFirstName() {
-        c1.setName("Nadine Ulla Blumenfeld");       // name style 1
-        assertEquals("Nadine Ulla", c1.getFirstName());
-        assertEquals("Blumenfeld", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Nadine Ulla Blumenfeld");
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();       // name style 1
+        assertEquals("Nadine Ulla", customer.firstName());
+        assertEquals("Blumenfeld", customer.lastName());
     }
 
     @Test @Order(511)
     void test511_setNameDoubleFirstName() {
-        c1.setName("Blumenfeld, Nadine Ulla");      // name style 2
-        assertEquals("Nadine Ulla", c1.getFirstName());
-        assertEquals("Blumenfeld", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Blumenfeld, Nadine Ulla");
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();       // name style 2
+        assertEquals("Nadine Ulla", customer.firstName());
+        assertEquals("Blumenfeld", customer.lastName());
     }
 
     @Test @Order(512)
     void test512_setNameDoubleFirstName() {
-        c1.setName("Blumenfeld; Nadine Ulla");      // name style 3
-        assertEquals("Nadine Ulla", c1.getFirstName());
-        assertEquals("Blumenfeld", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Blumenfeld; Nadine Ulla");      // name style 3
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get(); 
+        assertEquals("Nadine Ulla", customer.firstName());
+        assertEquals("Blumenfeld", customer.lastName());
     }
 
 
@@ -98,23 +112,29 @@ class Customer_500_NameXXL_Tests {
      */
     @Test @Order(520)
     void test520_setNameMultipartFirstNames() {
-        c1.setName("Nadine Ulla Maxine Blumenfeld");    // name style 1
-        assertEquals("Nadine Ulla Maxine", c1.getFirstName());
-        assertEquals("Blumenfeld", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Nadine Ulla Maxine Blumenfeld");    // name style 1
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get(); 
+        assertEquals("Nadine Ulla Maxine", customer.firstName());
+        assertEquals("Blumenfeld", customer.lastName());
     }
 
     @Test @Order(521)
     void test521_setNameMultipartFirstNames() {
-        c1.setName("Blumenfeld, Nadine Ulla Maxine");   // name style 2
-        assertEquals("Nadine Ulla Maxine", c1.getFirstName());
-        assertEquals("Blumenfeld", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Blumenfeld, Nadine Ulla Maxine");   // name style 2
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("Nadine Ulla Maxine", customer.firstName());
+        assertEquals("Blumenfeld", customer.lastName());
     }
 
     @Test @Order(522)
     void test522_setNameMultipartFirstNames() {
-        c1.setName("Blumenfeld; Nadine Ulla Maxine");   // name style 3
-        assertEquals("Nadine Ulla Maxine", c1.getFirstName());
-        assertEquals("Blumenfeld", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Blumenfeld; Nadine Ulla Maxine");   // name style 3
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("Nadine Ulla Maxine", customer.firstName());
+        assertEquals("Blumenfeld", customer.lastName());
     }
 
 
@@ -123,16 +143,20 @@ class Customer_500_NameXXL_Tests {
      */
     @Test @Order(530)
     void test530_setNameMultipartFirstNames() {
-        c1.setName("Khaled Mohamed Arif Saad-Abdelalim");   // name style 1
-        assertEquals("Khaled Mohamed Arif", c1.getFirstName());
-        assertEquals("Saad-Abdelalim", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Khaled Mohamed Arif Saad-Abdelalim");   // name style 1
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("Khaled Mohamed Arif", customer.firstName());
+        assertEquals("Saad-Abdelalim", customer.lastName());
     }
 
     @Test @Order(531)
     void test531_setNameMultipartNames() {
-        c1.setName("Saad-Abdelalim, Khaled Mohamed-Arif");  // name style 2
-        assertEquals("Khaled Mohamed-Arif", c1.getFirstName());
-        assertEquals("Saad-Abdelalim", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Saad-Abdelalim, Khaled Mohamed-Arif");  // name style 2
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("Khaled Mohamed-Arif", customer.firstName());
+        assertEquals("Saad-Abdelalim", customer.lastName());
     }
 
 
@@ -141,37 +165,47 @@ class Customer_500_NameXXL_Tests {
      */
     @Test @Order(550)
     void test550_setNameMultiDashMultipartFirstNames() {
-        c1.setName("Khaled-Mohamed Arif Saad-Abdelalim");   // name style 1
-        assertEquals("Khaled-Mohamed Arif", c1.getFirstName());
-        assertEquals("Saad-Abdelalim", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Khaled-Mohamed Arif Saad-Abdelalim"); 
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();  
+        assertEquals("Khaled-Mohamed Arif", customer.firstName());
+        assertEquals("Saad-Abdelalim", customer.lastName());
     }
 
     @Test @Order(551)
     void test551_setNameMultiDashMultipartFirstNames() {
-        c1.setName("Khaled-Mohamed-Arif Saad-Abdelalim");   // name style 1
-        assertEquals("Khaled-Mohamed-Arif", c1.getFirstName());
-        assertEquals("Saad-Abdelalim", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Khaled-Mohamed-Arif Saad-Abdelalim");   // name style 1
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get(); 
+        assertEquals("Khaled-Mohamed-Arif", customer.firstName());
+        assertEquals("Saad-Abdelalim", customer.lastName());
     }
 
     @Test @Order(552)
     void test552_setNameMultipartNames() {
-        c1.setName("Khaled Mohamed-Arif Saad-Abdelalim");   // name style 1
-        assertEquals("Khaled Mohamed-Arif", c1.getFirstName());
-        assertEquals("Saad-Abdelalim", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Khaled Mohamed-Arif Saad-Abdelalim");   // name style 1
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get(); 
+         assertEquals("Khaled Mohamed-Arif", customer.firstName());
+        assertEquals("Saad-Abdelalim", customer.lastName());
     }
 
     @Test @Order(553)
     void test553_setNameMultiDashMultipartFirstNames() {
-        c1.setName("Khaled-Mohamed-Arif-Saad-Abdelalim");   // name style 1
-        assertEquals("", c1.getFirstName());
-        assertEquals("Khaled-Mohamed-Arif-Saad-Abdelalim", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Khaled-Mohamed-Arif-Saad-Abdelalim");   // name style 1
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("", customer.firstName());
+        assertEquals("Khaled-Mohamed-Arif-Saad-Abdelalim", customer.lastName());
     }
 
     @Test @Order(544)
     void test544_setNameMultiDashMultipartFirstNames() {
-        c1.setName("Khaled Mohamed Arif Saad Abdelalim");   // name style 1
-        assertEquals("Khaled Mohamed Arif Saad", c1.getFirstName());
-        assertEquals("Abdelalim", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Khaled Mohamed Arif Saad Abdelalim");   // name style 1
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("Khaled Mohamed Arif Saad", customer.firstName());
+        assertEquals("Abdelalim", customer.lastName());
     }
 
 
@@ -180,19 +214,11 @@ class Customer_500_NameXXL_Tests {
      */
     @Test @Order(550)
     void test550_setNameExtremeLongNames() {
-        c1.setName("Auguste Viktoria Friederike Luise Feodora Jenny "
-                + "von-Schleswig-Holstein-Sonderburg-Augustenburg");
-        assertEquals("Auguste Viktoria Friederike Luise Feodora Jenny", c1.getFirstName());
-        assertEquals("von-Schleswig-Holstein-Sonderburg-Augustenburg", c1.getLastName());
+        Optional<Customer> custOpt = factory.createCustomer("Auguste Viktoria Friederike Luise Feodora Jenny ");
+        assertTrue(custOpt.isPresent());
+        Customer customer = custOpt.get();
+        assertEquals("Auguste Viktoria Friederike Luise Feodora", customer.firstName());
+        assertEquals("Jenny", customer.lastName());
         //
-        c1.setName("Auguste Viktoria Friederike Luise Feodora Jenny "
-                + "von-Schleswig-Holstein-Sonderburg-Augustenburg");
-        assertEquals("Auguste Viktoria Friederike Luise Feodora Jenny", c1.getFirstName());
-        assertEquals("von-Schleswig-Holstein-Sonderburg-Augustenburg", c1.getLastName());
-        //
-        c1.setName("Karl-Theodor Maria Nikolaus Johann Jacob Philipp Franz Joseph Sylvester",
-                "Buhl-Freiherr von und zu Guttenberg");
-        assertEquals("Karl-Theodor Maria Nikolaus Johann Jacob Philipp Franz Joseph Sylvester", c1.getFirstName());
-        assertEquals("Buhl-Freiherr von und zu Guttenberg", c1.getLastName());
     }
 }

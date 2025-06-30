@@ -16,7 +16,10 @@ import datamodel.DataFactory;
  * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
 public class Application_D1 implements Runner {
-
+    //Temoräre Main für Abgabe:
+    public static void main(String[] args) {
+        new Application_D1().run(args);
+    }
     /**
      * Run code of the <i>C12</i> assignment.
      */
@@ -33,8 +36,8 @@ public class Application_D1 implements Runner {
             df.createCustomer("Khaled Saad Mohamed Abdelalim", "+49 1524-12948210"),
             // 
             // attempts to create Customer objects from invalid email address, no object is created
-            df.createCustomer("Mandy Mondschein", "locomandy<>gmx.de"),
-            df.createCustomer("", "nobody@gmx.de") // invalid name, no object is created
+            df.createCustomer("Mandy Mondschein", "locomandy@gmx.de"),
+            df.createCustomer("Meissner Susanne", "nobody@gmx.de") // invalid name, no object is created
         // 
         ).stream()
             .flatMap(Optional::stream)

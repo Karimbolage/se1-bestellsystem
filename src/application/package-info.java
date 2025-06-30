@@ -18,18 +18,10 @@ class package_info {
     /**
      * Author attribute to appear in javadoc.
      */
-<<<<<<< HEAD
     static final String Author = "kShali";   // <-- adjust with your name
-=======
-    static final String Author = "sgraupner";   // <-- adjust with your name
->>>>>>> se1-remote/d1-datafactory
 
     /**
      * Version attribute to appear in javadoc.
      */
-<<<<<<< HEAD
-    static final String Version = "C12-1.0.0-SNAPSHOT";
-=======
     static final String Version = "D12-1.0.0-SNAPSHOT";
->>>>>>> se1-remote/d1-datafactory
 }
